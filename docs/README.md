@@ -225,12 +225,6 @@ Ver: [Guía de Desarrollo](docs/DESARROLLO.md)
 
 ---
 
-## 👥 Autores
-
-- **Tu Nombre** - *Desarrollo Principal* - [GitHub](https://github.com/tuusuario)
-
----
-
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - ver [LICENSE](LICENSE) para detalles.
