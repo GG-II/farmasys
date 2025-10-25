@@ -1,0 +1,5 @@
+dao\MedicinaDAOTest.class
+dao\VentaDAOTest.class
+model\VentaTest.class
+model\MedicinaTest.class
+model\DetalleVentaTest.class
