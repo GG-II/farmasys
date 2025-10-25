@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Demanda IA - FarmaSys</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-green: #00A86B;
+            --primary-green-hover: #008F5B;
+            --secondary-blue: #0078D4;
+            --success-green: #107C10;
+            --warning-orange: #FF8C00;
+            --danger-red: #D13438;
+            --purple: #8764B8;
+            --purple-hover: #6F4E9E;
+            --light-gray: #F3F2F1;
+            --border-gray: #E1DFDD;
+            --text-primary: #323130;
+            --text-secondary: #605E5C;
+        }
+        
+        body {
+            background-color: #FAF9F8;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            color: var(--text-primary);
+            padding: 20px;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header de página */
+        .page-header {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .page-header h1 i {
+            color: var(--purple);
+        }
+        
+        /* Botón de volver */
+        .btn-back {
+            background: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-gray);
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-back:hover {
+            background-color: var(--light-gray);
+            color: var(--text-primary);
+            border-color: var(--border-gray);
+        }
+        
+        /* Tarjetas */
+        .card {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: none;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title i {
+            color: var(--purple);
+        }
+        
+        /* Inputs y formularios */
+        .form-control, .form-select {
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 1px var(--purple);
+        }
+        
+        .form-label {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        /* Botones */
+        .btn-primary {
+            background-color: var(--purple);
+            border-color: var(--purple);
+            color: white;
+            font-weight: 500;
+            border-radius: 4px;
+            padding: 8px 16px;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--purple-hover);
+            border-color: var(--purple-hover);
+        }
+        
+        /* Loading */
+        .spinner-border {
+            width: 40px;
+            height: 40px;
+            color: var(--purple);
+        }
+        
+        .text-white p {
+            color: var(--text-secondary) !important;
+        }
+        
+        /* Tarjetas de resumen */
+        .card .card {
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            text-align: center;
+            padding: 0;
+        }
+        
+        .card .card .card-body {
+            padding: 20px;
+        }
+        
+        .card .card h3 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .card .card p {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .card .card small {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .text-primary {
+            color: var(--purple) !important;
+        }
+        
+        .text-success {
+            color: var(--success-green) !important;
+        }
+        
+        .text-info {
+            color: var(--secondary-blue) !important;
+        }
+        
+        .text-warning {
+            color: var(--warning-orange) !important;
+        }
+        
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+        
+        /* Week cards */
+        .week-card {
+            background: white;
+            padding: 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .week-card strong {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .week-card small {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        /* Progress bar */
+        .progress {
+            background-color: var(--light-gray);
+            border-radius: 4px;
+        }
+        
+        .progress-bar {
+            background-color: var(--purple);
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .bg-primary {
+            background-color: var(--purple) !important;
+        }
+        
+        /* Alerts */
+        .alert {
+            border-radius: 4px;
+            border: 1px solid;
+            font-size: 14px;
+        }
+        
+        .alert h5 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .alert p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .alert-info {
+            background-color: #E6F2FA;
+            border-color: var(--secondary-blue);
+            color: var(--secondary-blue);
+        }
+        
+        .alert-warning {
+            background-color: #FFF4E5;
+            border-color: var(--warning-orange);
+            color: var(--warning-orange);
+        }
+        
+        .alert-success {
+            background-color: #E6F7F1;
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+        
+        .alert-primary {
+            background-color: #F3EFFC;
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+        
+        .alert-light {
+            background-color: var(--light-gray);
+            border-color: var(--border-gray);
+            color: var(--text-primary);
+        }
+        
+        .alert-light strong {
+            color: var(--text-primary);
+        }
+        
+        /* Chart container */
+        canvas {
+            max-height: 400px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .page-header h1 {
+                font-size: 20px;
+            }
+            
+            body {
+                padding: 12px;
+            }
+            
+            .card .card h3 {
+                font-size: 24px;
+            }
+        }
+        
+        /* Spacing utilities */
+        .mb-4 {
+            margin-bottom: 20px !important;
+        }
+        
+        .mt-2 {
+            margin-top: 8px !important;
+        }
+        
+        .mb-3 {
+            margin-bottom: 16px !important;
+        }
+        
+        .mb-2 {
+            margin-bottom: 8px !important;
+        }
+        
+        .mb-0 {
+            margin-bottom: 0 !important;
+        }
+        
+        /* Text center override */
+        .text-center.text-white {
+            color: var(--text-primary) !important;
+        }
+        
+        .text-center.text-white .spinner-border {
+            color: var(--purple) !important;
+        }
+        
+        .text-center.text-white p {
+            color: var(--text-secondary) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+                <h1 class="mt-2">
+                    <i class="fas fa-brain"></i> Predicción de Demanda con IA
+                </h1>
+            </div>
+        </div>
+
+        <!-- Formulario de Predicción -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-chart-line"></i> Predecir Demanda
+                </h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Medicina</label>
+                        <select id="productName" class="form-select">
+                            <option value="">Seleccione una medicina...</option>
+                            <option value="ABRILAR">ABRILAR</option>
+                            <option value="ACI-TIP">ACI-TIP</option>
+                            <option value="ACREA">ACREA</option>
+                            <option value="APSS IM">APSS IM</option>
+                            <option value="AZERKYM">AZERKYM</option>
+                            <option value="BERTADUO">BERTADUO</option>
+                            <option value="BLASAMO DOLOCREAM">BLASAMO DOLOCREAM</option>
+                            <option value="CERVIXEPT">CERVIXEPT</option>
+                            <option value="CERVIXEPT OVULOS">CERVIXEPT OVULOS</option>
+                            <option value="DERMAFIX">DERMAFIX</option>
+                            <option value="DEXLANZOPRAL">DEXLANZOPRAL</option>
+                            <option value="DIABELIFE">DIABELIFE</option>
+                            <option value="ESPONTAL">ESPONTAL</option>
+                            <option value="EVECARE">EVECARE</option>
+                            <option value="FARNERVAL">FARNERVAL</option>
+                            <option value="FEMIVITAL PRENATALES">FEMIVITAL PRENATALES</option>
+                            <option value="FLUKYN">FLUKYN</option>
+                            <option value="FOLY PLUS">FOLY PLUS</option>
+                            <option value="GASTROFLUX">GASTROFLUX</option>
+                            <option value="GASTREXX PLUS">GASTREXX PLUS</option>
+                            <option value="GASTROZYM">GASTROZYM</option>
+                            <option value="GERIAKING VITAL">GERIAKING VITAL</option>
+                            <option value="GESIMAX GASTRIC">GESIMAX GASTRIC</option>
+                            <option value="GINNA VAGINAL">GINNA VAGINAL</option>
+                            <option value="GRIIN FLEX">GRIIN FLEX</option>
+                            <option value="GRIIN SKIN HAIR">GRIIN SKIN HAIR</option>
+                            <option value="GYNEDUO CREMA">GYNEDUO CREMA</option>
+                            <option value="GYNFLU-D">GYNFLU-D</option>
+                            <option value="ISOTRETINOINA">ISOTRETINOINA</option>
+                            <option value="LINIBYN">LINIBYN</option>
+                            <option value="LUMENEX">LUMENEX</option>
+                            <option value="METFORMINA DENK">METFORMINA DENK</option>
+                            <option value="METRIQUIN">METRIQUIN</option>
+                            <option value="NAPROZOL BLISTER">NAPROZOL BLISTER</option>
+                            <option value="NEO-MELUMBRINA">NEO-MELUMBRINA</option>
+                            <option value="NEURO INSTAFLAM">NEURO INSTAFLAM</option>
+                            <option value="PANGASTRIC">PANGASTRIC</option>
+                            <option value="PANTODENK">PANTODENK</option>
+                            <option value="REAKT">REAKT</option>
+                            <option value="REAKT JARABE">REAKT JARABE</option>
+                            <option value="REALIN">REALIN</option>
+                            <option value="RENOVART">RENOVART</option>
+                            <option value="REVERSAL FLEX">REVERSAL FLEX</option>
+                            <option value="RIOPAN">RIOPAN</option>
+                            <option value="ROFEMED 1G IM">ROFEMED 1G IM</option>
+                            <option value="SEPTIDEX">SEPTIDEX</option>
+                            <option value="SERTAL COMPUESTO">SERTAL COMPUESTO</option>
+                            <option value="SERTAL FORTE PERLAS">SERTAL FORTE PERLAS</option>
+                            <option value="SPACEK">SPACEK</option>
+                            <option value="SPASMO-UROLONG">SPASMO-UROLONG</option>
+                            <option value="TAZAROL RAPID">TAZAROL RAPID</option>
+                            <option value="TENSINOR H 160">TENSINOR H 160</option>
+                            <option value="TRIACID">TRIACID</option>
+                            <option value="TRIFAMOX IBL TABLETAS">TRIFAMOX IBL TABLETAS</option>
+                            <option value="UNOCEF">UNOCEF</option>
+                            <option value="V-GEL">V-GEL</option>
+                            <option value="VIGORLAX">VIGORLAX</option>
+                            <option value="VIRGOLAX">VIRGOLAX</option>
+                            <option value="VISCOTEINA COMPUESTA JBE">VISCOTEINA COMPUESTA JBE</option>
+                            <option value="VISCOTEINA JBE">VISCOTEINA JBE</option>
+                            <option value="YES NOT">YES NOT</option>
+                            <option value="ZETAWIN 1G FORTE">ZETAWIN 1G FORTE</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Semanas a Predecir</label>
+                        <input type="number" id="weeksAhead" class="form-control" 
+                               value="4" min="1" max="12">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-primary w-100" onclick="predecirDemanda()">
+                            <i class="fas fa-magic"></i> Predecir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="text-center text-white" style="display: none;">
+            <div class="spinner-border" role="status"></div>
+            <p class="mt-2">Analizando datos con IA...</p>
+        </div>
+
+        <!-- Resultados -->
+        <div id="resultados" style="display: none;">
+            <!-- Resumen -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-bar"></i> Resumen de Predicción
+                    </h5>
+                    <div class="row" id="resumenCards">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predicciones Semanales -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-calendar-week"></i> Predicciones Semanales
+                    </h5>
+                    <div id="weeklyPredictions">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-area"></i> Gráfico de Demanda
+                    </h5>
+                    <canvas id="demandChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recomendaciones de Inventario -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-boxes"></i> Recomendaciones de Inventario
+                    </h5>
+                    <div id="inventoryRecommendations">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ia.js"></script>
+</body>
+</html>

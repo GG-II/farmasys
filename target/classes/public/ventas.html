@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas - FarmaSys</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #00A86B;
+            --primary-green-hover: #008F5B;
+            --secondary-blue: #0078D4;
+            --success-green: #107C10;
+            --warning-orange: #FF8C00;
+            --danger-red: #D13438;
+            --light-gray: #F3F2F1;
+            --border-gray: #E1DFDD;
+            --text-primary: #323130;
+            --text-secondary: #605E5C;
+        }
+        
+        body {
+            background-color: #FAF9F8;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            color: var(--text-primary);
+            padding: 20px;
+        }
+        
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Header de página */
+        .page-header {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .page-header h1 i {
+            color: var(--warning-orange);
+        }
+        
+        /* Botón de volver */
+        .btn-back {
+            background: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-gray);
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-back:hover {
+            background-color: var(--light-gray);
+            color: var(--text-primary);
+            border-color: var(--border-gray);
+        }
+        
+        /* Tarjetas */
+        .card {
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: none;
+        }
+        
+        .card-header {
+            background-color: var(--light-gray);
+            border-bottom: 1px solid var(--border-gray);
+            padding: 16px 20px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-header.bg-primary {
+            background-color: var(--primary-green) !important;
+            color: white !important;
+        }
+        
+        .card-header.bg-primary h5 {
+            color: white !important;
+        }
+        
+        .card-header.bg-success {
+            background-color: var(--warning-orange) !important;
+            color: white !important;
+        }
+        
+        .card-header.bg-success h5 {
+            color: white !important;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        /* Inputs y formularios */
+        .form-control, .form-select {
+            border: 1px solid var(--border-gray);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 1px var(--primary-green);
+        }
+        
+        .form-label {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        /* Items de productos */
+        .producto-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+        
+        .producto-item:hover {
+            background-color: var(--light-gray);
+            border-color: var(--primary-green) !important;
+        }
+        
+        /* Botones */
+        .btn-success {
+            background-color: var(--success-green);
+            border-color: var(--success-green);
+            color: white;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+        
+        .btn-success:hover {
+            background-color: #0F6E0F;
+            border-color: #0F6E0F;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-red);
+            border-color: var(--danger-red);
+            color: white;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+        
+        .btn-danger:hover {
+            background-color: #B02E32;
+            border-color: #B02E32;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            border-color: var(--border-gray);
+            color: var(--text-primary);
+            font-weight: 500;
+            border-radius: 4px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--light-gray);
+            border-color: var(--border-gray);
+            color: var(--text-primary);
+        }
+        
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+        
+        .btn-lg {
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        
+        /* Badge */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid;
+        }
+        
+        .bg-info {
+            background-color: #E6F2FA !important;
+            color: var(--secondary-blue) !important;
+            border-color: var(--secondary-blue) !important;
+        }
+        
+        /* Carrito items */
+        .bg-light {
+            background-color: var(--light-gray) !important;
+        }
+        
+        /* Total de venta */
+        .carrito-total {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--success-green);
+        }
+        
+        /* Text utilities */
+        .text-primary {
+            color: var(--primary-green) !important;
+        }
+        
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+        
+        /* Border utilities */
+        .border {
+            border: 1px solid var(--border-gray) !important;
+        }
+        
+        .rounded {
+            border-radius: 4px !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .page-header h1 {
+                font-size: 20px;
+            }
+            
+            body {
+                padding: 12px;
+            }
+            
+            .carrito-total {
+                font-size: 24px;
+            }
+        }
+        
+        /* Spacing utilities */
+        .mb-4 {
+            margin-bottom: 20px !important;
+        }
+        
+        .mt-2 {
+            margin-top: 8px !important;
+        }
+        
+        .mb-3 {
+            margin-bottom: 16px !important;
+        }
+        
+        .mb-2 {
+            margin-bottom: 8px !important;
+        }
+        
+        .mt-1 {
+            margin-top: 4px !important;
+        }
+        
+        .mb-0 {
+            margin-bottom: 0 !important;
+        }
+        
+        .gap-2 {
+            gap: 8px !important;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-gray);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C8C6C4;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+                <h1 class="mt-2">
+                    <i class="fas fa-cash-register"></i> Punto de Venta
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Columna izquierda - Productos -->
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-pills"></i> Medicinas Disponibles</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" id="buscarProducto" class="form-control mb-3" 
+                               placeholder="Buscar medicina...">
+                        
+                        <div id="listaProductos" style="max-height: 500px; overflow-y: auto;">
+                            <!-- Se llenará con JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna derecha - Carrito -->
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-shopping-cart"></i> Carrito de Venta</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Selector de cliente -->
+                        <div class="mb-3">
+                            <label class="form-label">Cliente *</label>
+                            <select class="form-select" id="selectCliente" required>
+                                <option value="">Seleccione un cliente...</option>
+                            </select>
+                        </div>
+
+                        <!-- Items del carrito -->
+                        <div id="itemsCarrito" class="mb-3" style="max-height: 300px; overflow-y: auto;">
+                            <p class="text-muted text-center">El carrito está vacío</p>
+                        </div>
+
+                        <hr>
+
+                        <!-- Total -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Total:</h4>
+                            <div class="carrito-total">Q<span id="totalVenta">0.00</span></div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success btn-lg" onclick="procesarVenta()">
+                                <i class="fas fa-check"></i> Procesar Venta
+                            </button>
+                            <button class="btn btn-danger" onclick="limpiarCarrito()">
+                                <i class="fas fa-trash"></i> Limpiar Carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ventas.js"></script>
+</body>
+</html>
